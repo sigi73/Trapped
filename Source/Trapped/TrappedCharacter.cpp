@@ -39,6 +39,9 @@ ATrappedCharacter::ATrappedCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+
+	JumpTimer = 0.0f;
+	bPrepJump = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -48,8 +51,9 @@ void ATrappedCharacter::SetupPlayerInputComponent(class UInputComponent* InputCo
 {
 	// Set up gameplay key bindings
 	check(InputComponent);
-	InputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	InputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	InputComponent->BindAction("Jump", IE_Pressed, this, &ATrappedCharacter::PrepJump);
+	InputComponent->BindAction("Jump", IE_Released, this, &ATrappedCharacter::StartJump);
+	//InputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
 	InputComponent->BindAxis("MoveForward", this, &ATrappedCharacter::MoveForward);
 	InputComponent->BindAxis("MoveRight", this, &ATrappedCharacter::MoveRight);
@@ -99,7 +103,7 @@ void ATrappedCharacter::LookUpAtRate(float Rate)
 
 void ATrappedCharacter::MoveForward(float Value)
 {
-	if ((Controller != NULL) && (Value != 0.0f))
+	if ((Controller != NULL) && (Value != 0.0f) && (!bPrepJump))
 	{
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -113,7 +117,7 @@ void ATrappedCharacter::MoveForward(float Value)
 
 void ATrappedCharacter::MoveRight(float Value)
 {
-	if ( (Controller != NULL) && (Value != 0.0f) )
+	if ((Controller != NULL) && (Value != 0.0f) && (!bPrepJump))
 	{
 		// find out which way is right
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -123,5 +127,32 @@ void ATrappedCharacter::MoveRight(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
+	}
+}
+
+void ATrappedCharacter::PrepJump()
+{
+	bPrepJump = true;
+	UE_LOG(LogTemp, Warning, TEXT("PrepJump called"));
+}
+
+void ATrappedCharacter::StartJump()
+{
+	bPrepJump = false;
+	Jump();
+	JumpTimer = 0.0f;
+}
+
+void ATrappedCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (JumpTimer > 500.0f)
+	{
+		StopJumping();
+	}
+	else
+	{
+		JumpTimer += DeltaSeconds;
 	}
 }

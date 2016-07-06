@@ -26,6 +26,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 
+	void Tick(float DeltaSeconds) override;
+
 protected:
 
 	/** Called for forwards/backward input */
@@ -33,6 +35,13 @@ protected:
 
 	/** Called for side to side input */
 	void MoveRight(float Value);
+
+	void PrepJump();
+	void StartJump();
+	float JumpTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
+	bool bPrepJump;
 
 	/** 
 	 * Called via input to turn at a given rate. 
