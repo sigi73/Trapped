@@ -38,10 +38,29 @@ protected:
 
 	void PrepJump();
 	void StartJump();
+
+	
 	float JumpTimer;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Movement")
+	float PrepJumpTimer;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Movement")
+	float PrepJumpTime;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Movement")
+	float MovingPrepTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	bool bPrepJump;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float BaseJumpVelocity;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float MaxJumpVelocity;
+
+
 
 	/** 
 	 * Called via input to turn at a given rate. 

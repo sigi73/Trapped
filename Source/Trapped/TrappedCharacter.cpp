@@ -8,6 +8,15 @@
 
 ATrappedCharacter::ATrappedCharacter()
 {
+
+	JumpTimer = 0.0f;
+	bPrepJump = false;
+	PrepJumpTime = 0.6f;
+	MovingPrepTime = 0.2f;
+	PrepJumpTimer = PrepJumpTime;
+	BaseJumpVelocity = 300.0f;
+	MaxJumpVelocity = 500.0f;
+
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -23,7 +32,7 @@ ATrappedCharacter::ATrappedCharacter()
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
-	GetCharacterMovement()->JumpZVelocity = 600.f;
+	GetCharacterMovement()->JumpZVelocity = BaseJumpVelocity;
 	GetCharacterMovement()->AirControl = 0.2f;
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
@@ -40,8 +49,6 @@ ATrappedCharacter::ATrappedCharacter()
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 
-	JumpTimer = 0.0f;
-	bPrepJump = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -132,8 +139,7 @@ void ATrappedCharacter::MoveRight(float Value)
 
 void ATrappedCharacter::PrepJump()
 {
-	bPrepJump = true;
-	UE_LOG(LogTemp, Warning, TEXT("PrepJump called"));
+	PrepJumpTimer = 0.0f;
 }
 
 void ATrappedCharacter::StartJump()
@@ -141,18 +147,47 @@ void ATrappedCharacter::StartJump()
 	bPrepJump = false;
 	Jump();
 	JumpTimer = 0.0f;
+	
+	float JumpVelocity;
+	if (PrepJumpTimer <= MovingPrepTime)
+	{
+		JumpVelocity = BaseJumpVelocity;
+	}
+	else
+	{
+		JumpVelocity = PrepJumpTimer / PrepJumpTime * MaxJumpVelocity;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("EVER GOT HERE, %f, %f"), PrepJumpTimer, PrepJumpTime);
+	GetCharacterMovement()->JumpZVelocity = JumpVelocity;
+
+	PrepJumpTimer = PrepJumpTime;
 }
 
 void ATrappedCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if (JumpTimer > 500.0f)
+
+	if (JumpTimer > 0.5f)
 	{
 		StopJumping();
 	}
 	else
 	{
 		JumpTimer += DeltaSeconds;
+	}
+
+	if (PrepJumpTimer >= PrepJumpTime)
+	{
+		PrepJumpTimer = PrepJumpTime;
+	}
+	else
+	{
+		
+		if (PrepJumpTimer > MovingPrepTime)
+		{
+			bPrepJump = true;
+		}
+		PrepJumpTimer += DeltaSeconds;
 	}
 }
