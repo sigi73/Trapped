@@ -157,7 +157,6 @@ void ATrappedCharacter::StartJump()
 	{
 		JumpVelocity = PrepJumpTimer / PrepJumpTime * MaxJumpVelocity;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("EVER GOT HERE, %f, %f"), PrepJumpTimer, PrepJumpTime);
 	GetCharacterMovement()->JumpZVelocity = JumpVelocity;
 
 	PrepJumpTimer = PrepJumpTime;

@@ -32,8 +32,15 @@ void ATrappedCharacterController::Interact()
 
 		if (Interactable && Character)
 		{
-			Interactable->Interact();
-			Character->Interact();
+			FVector InteractablePos = Interactable->GetActorLocation();
+			FVector CharacterPos = Character->GetActorLocation();
+			float Dist = FVector::Dist(InteractablePos, CharacterPos);
+
+			if (Dist <= Character->InteractRange)
+			{
+				Interactable->Interact();
+				Character->Interact();
+			}
 		}
 	}
 }

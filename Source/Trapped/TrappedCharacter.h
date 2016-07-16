@@ -30,6 +30,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void Interact();
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Interaction")
+	float InteractRange;
 
 protected:
 
@@ -64,6 +67,7 @@ protected:
 	float MaxJumpVelocity;
 
 
+	
 
 	/** 
 	 * Called via input to turn at a given rate. 
