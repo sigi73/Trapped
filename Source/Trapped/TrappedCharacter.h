@@ -28,6 +28,9 @@ public:
 
 	void Tick(float DeltaSeconds) override;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void Interact();
+
 protected:
 
 	/** Called for forwards/backward input */
