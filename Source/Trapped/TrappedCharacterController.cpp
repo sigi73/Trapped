@@ -10,6 +10,7 @@
 ATrappedCharacterController::ATrappedCharacterController()
 {
 	bShowMouseCursor = true;
+	bEnableMouseOverEvents = true;
 }
 
 void ATrappedCharacterController::SetupInputComponent()
