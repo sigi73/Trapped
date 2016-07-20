@@ -1,6 +1,7 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 
 #include "Trapped.h"
+#include "BaseInteractable.h"
 #include "TrappedCharacter.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -76,6 +77,9 @@ void ATrappedCharacter::SetupPlayerInputComponent(class UInputComponent* InputCo
 	// handle touch devices
 	InputComponent->BindTouch(IE_Pressed, this, &ATrappedCharacter::TouchStarted);
 	InputComponent->BindTouch(IE_Released, this, &ATrappedCharacter::TouchStopped);
+
+	InputComponent->BindAction("Interact", IE_Pressed, this, &ATrappedCharacter::Interact);
+
 }
 
 
@@ -110,7 +114,7 @@ void ATrappedCharacter::LookUpAtRate(float Rate)
 
 void ATrappedCharacter::MoveForward(float Value)
 {
-	if ((Controller != NULL) && (Value != 0.0f) && (!bPrepJump))
+	if ((Controller != NULL) && (Value != 0.0f) && (!bPrepJump) && (!bIsInteracting))
 	{
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -124,7 +128,7 @@ void ATrappedCharacter::MoveForward(float Value)
 
 void ATrappedCharacter::MoveRight(float Value)
 {
-	if ((Controller != NULL) && (Value != 0.0f) && (!bPrepJump))
+	if ((Controller != NULL) && (Value != 0.0f) && (!bPrepJump) && (!bIsInteracting))
 	{
 		// find out which way is right
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -188,5 +192,19 @@ void ATrappedCharacter::Tick(float DeltaSeconds)
 			bPrepJump = true;
 		}
 		PrepJumpTimer += DeltaSeconds;
+	}
+}
+
+
+void ATrappedCharacter::Interact()
+{
+	FHitResult HitOut = FHitResult(ForceInit);
+	
+	GetWorld()->LineTraceSingleByChannel(HitOut, GetActorLocation(), GetActorLocation() + GetActorForwardVector() * InteractRange, ECC_Visibility);
+	ABaseInteractable* Interactable = Cast<ABaseInteractable>(HitOut.GetActor());
+	if (Interactable)
+	{
+		Interactable->Interact();
+		bIsInteracting = true;
 	}
 }

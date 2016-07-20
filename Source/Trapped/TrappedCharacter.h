@@ -28,11 +28,14 @@ public:
 
 	void Tick(float DeltaSeconds) override;
 
-	UFUNCTION(BlueprintImplementableEvent)
+	
 	void Interact();
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Interaction")
 	float InteractRange;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Interaction")
+	bool bIsInteracting;
 
 protected:
 

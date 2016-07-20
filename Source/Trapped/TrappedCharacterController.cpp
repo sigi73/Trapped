@@ -9,7 +9,7 @@
 
 ATrappedCharacterController::ATrappedCharacterController()
 {
-	bShowMouseCursor = true;
+	//bShowMouseCursor = true;
 	bEnableMouseOverEvents = true;
 }
 
@@ -17,9 +17,9 @@ void ATrappedCharacterController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	InputComponent->BindAction("Interact", IE_Pressed, this, &ATrappedCharacterController::Interact);
+	//InputComponent->BindAction("Interact", IE_Pressed, this, &ATrappedCharacterController::Interact);
 }
-
+/*
 void ATrappedCharacterController::Interact()
 {
 	FHitResult HitResult;
@@ -40,8 +40,10 @@ void ATrappedCharacterController::Interact()
 			if (Dist <= Character->InteractRange)
 			{
 				Interactable->Interact();
-				Character->Interact();
+				Character->bIsInteracting = true;
+				//Character->Interact();
 			}
 		}
 	}
 }
+*/
